@@ -6,7 +6,7 @@ import { AesCryptoKey } from "./key";
 
 export class AesCrypto {
 
-  public static AES_KW_IV = Buffer.from("A6A6A6A6A6A6A6A6", "hex");
+  public static AES_KW_IV = ()=>Buffer.from("A6A6A6A6A6A6A6A6", "hex");
 
   public static async generateKey(algorithm: AesKeyGenParams, extractable: boolean, keyUsages: KeyUsage[]): Promise<AesCryptoKey> {
     const key = new AesCryptoKey();
@@ -162,14 +162,14 @@ export class AesCrypto {
   }
 
   public static async encryptAesKW(algorithm: Algorithm, key: AesCryptoKey, data: Buffer) {
-    const cipher = crypto.createCipheriv(`id-aes${key.algorithm.length}-wrap`, key.data, this.AES_KW_IV);
+    const cipher = crypto.createCipheriv(`id-aes${key.algorithm.length}-wrap`, key.data, this.AES_KW_IV());
     let enc = cipher.update(data);
     enc = Buffer.concat([enc, cipher.final()]);
     return new Uint8Array(enc).buffer;
   }
 
   public static async decryptAesKW(algorithm: Algorithm, key: AesCryptoKey, data: Buffer) {
-    const decipher = crypto.createDecipheriv(`id-aes${key.algorithm.length}-wrap`, key.data, this.AES_KW_IV);
+    const decipher = crypto.createDecipheriv(`id-aes${key.algorithm.length}-wrap`, key.data, this.AES_KW_IV());
     let dec = decipher.update(data);
     dec = Buffer.concat([dec, decipher.final()]);
     return new Uint8Array(dec).buffer;
